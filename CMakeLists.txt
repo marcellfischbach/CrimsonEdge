@@ -54,6 +54,7 @@ find_package(OpenGL)
 find_package(PNG)
 find_package(JPEG)
 find_package(Bullet)
+find_package(JNI)
 #find_package(GLEW)
 
 
@@ -74,6 +75,7 @@ include_directories(${CrimsonEdge_SOURCE_DIR}/Engine)
 #include_directories(${CrimsonEdge_BINARY_DIR}/Engine)
 include_directories(${CrimsonEdge_SOURCE_DIR}/Editor)
 #include_directories(${CrimsonEdge_BINARY_DIR}/Editor)
+include_directories(${JNI_INCLUDE_DIRS})
 
 
 add_subdirectory(3rdparty)

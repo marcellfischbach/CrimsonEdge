@@ -39,4 +39,5 @@ target_link_libraries(ceLauncher
         ceImgLoader
         ceAssimpLoader
         ${SDL_LIBRARY}
+        ${JNI_LIBRARIES}
         )
