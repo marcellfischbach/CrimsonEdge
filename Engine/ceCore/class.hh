@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <ceCore/defs.hh>
+#include <ceCore/cejava.hh>
 
 //
 // Meta information for CE_CLASS definitions
@@ -17,6 +18,40 @@
     static const ce::Class *GetStaticClass (); \
     void *QueryClass(const ce::Class *clazz) override; \
     const void *QueryClass(const ce::Class *clazz) const override
+
+
+
+#ifdef CE_JAVA
+#define CE_CLASS_GEN_JAVA_OBJECT public: \
+  void SetJObject(JNIEnv* env, jobject obj) override \
+  { \
+    if (obj != m_jobject)  \
+    { \
+      if (m_jobject)\
+      { \
+        env->DeleteGlobalRef(obj); \
+      } \
+      m_jobject = env->NewGlobalRef(obj); \
+    } \
+    m_jenv = env; \
+  } \
+  jobject GetJObject() const override \
+  { \
+    return m_jobject; \
+  } \
+  JNIEnv *GetJNIEnv() const override \
+  { \
+    return m_jenv; \
+  } \
+  protected: \
+  jobject m_jobject; \
+  JNIEnv *m_jenv;
+
+
+#else
+#define CE_CLASS_GEN_JAVA_OBJECT 
+#endif // CE_JAVA
+
 
 #define CE_CLASS_GEN_OBJECT \
     CE_CLASS_GEN; \
@@ -36,10 +71,42 @@
     { \
       return m_refCount; \
     } \
+    CE_CLASS_GEN_JAVA_OBJECT \
     private: \
       int64_t m_refCount = 1
 
-#define CE_CLASS_GEN_CONSTR m_refCount = 1
+
+
+
+
+
+#ifdef CE_JAVA
+#define CE_CLASS_GEN_JAVA_CONSTR m_jobject = nullptr; m_jenv = nullptr;
+#else
+#define CE_CLASS_GEN_JAVA_CONSTR 
+#endif // CE_JAVA
+
+
+#define CE_CLASS_GEN_CONSTR \
+    CE_CLASS_GEN_JAVA_CONSTR \
+    m_refCount = 1;\
+
+
+#ifdef CE_JAVA
+#define CE_CLASS_GEN_JAVA_DESTR \
+  if (m_jobject && m_jenv) \
+  { \
+    m_jenv->DeleteGlobalRef(m_jobject); \
+    m_jobject = nullptr; \
+    m_jenv = nullptr; \
+  }
+#else
+#define CE_CLASS_GEN_JAVA_DESTR
+#endif
+
+#define CE_CLASS_GEN_DESTR \
+  CE_CLASS_GEN_JAVA_DESTR
+  
 
 #define CE_WEAK_OBJECT(Super) \
   public: void AddRef () { Super::AddRef (); }\
@@ -154,6 +221,13 @@ struct CE_CORE_API iObject
     return reinterpret_cast<const T*>(QueryClass(T::GetStaticClass()));
   }
   CE_NODISCARD virtual const void* QueryClass(const Class* clazz) const;
+
+#ifdef CE_JAVA
+  virtual void SetJObject(JNIEnv* env, jobject obj) = 0;
+  virtual jobject GetJObject() const = 0;
+  virtual JNIEnv* GetJNIEnv() const = 0;
+#endif // CE_JAVA
+
 };
 
 

@@ -3,6 +3,7 @@ add_definitions(-DCE_CORE_EXPORT)
 add_definitions(-D_USE_MATH_DEFINES)
 
 set(SOURCES
+        cejava.hh
         class.cc
         class.hh
         classregistry.cc
@@ -29,6 +30,8 @@ set(SOURCES
         entity/entity.hh
         entity/entitystate.cc
         entity/entitystate.hh
+        entity/jentitystate.cc
+        entity/jentitystate.hh
         entity/lightstate.cc
         entity/lightstate.hh
         entity/rigidbodystate.cc
@@ -220,7 +223,7 @@ add_library(ceCore SHARED
 
 target_link_libraries(ceCore
         ${PNG_LIBRARIES}
-
+        ${JNI_LIBRARIES}
         )
 
 add_dependencies(ceCore ceMOC)

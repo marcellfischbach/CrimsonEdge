@@ -192,3 +192,15 @@ void SpatialState::TransformationUpdatedPostChildren()
 }
 
 }
+
+
+void Java_org_crimsonedge_core_entity_SpatialState_setLocalMatrix(JNIEnv* env, jclass cls, jlong refId, jfloatArray matrix)
+{
+  jboolean copy = false;
+  jfloat* buf = env->GetFloatArrayElements(matrix, &copy);
+  reinterpret_cast<ce::SpatialState*>(refId)->SetLocalMatrix(ce::Matrix4f((const float*)matrix));
+  if (copy)
+  {
+    delete[] buf;
+  }
+}

@@ -21,6 +21,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 unset(CMAKE_CXX_CL_SHOWINCLUDE)
 
 set(DISABLE_RENDERING OFF)
+set(JAVA_BACKEND ON)
 
 
 include(${CrimsonEdge_SOURCE_DIR}/Scripts/CrimsonEdge.cmake) 
@@ -53,9 +54,16 @@ endif()
 find_package(OpenGL)
 find_package(PNG)
 find_package(JPEG)
-find_package(Bullet)
+#find_package(Bullet)
 find_package(JNI)
 #find_package(GLEW)
+
+
+if (${JNI_FOUND})
+	if (${JAVA_BACKEND})
+		add_definitions(-DCE_JAVA)
+	endif()
+endif()
 
 
 
@@ -75,7 +83,9 @@ include_directories(${CrimsonEdge_SOURCE_DIR}/Engine)
 #include_directories(${CrimsonEdge_BINARY_DIR}/Engine)
 include_directories(${CrimsonEdge_SOURCE_DIR}/Editor)
 #include_directories(${CrimsonEdge_BINARY_DIR}/Editor)
-include_directories(${JNI_INCLUDE_DIRS})
+if(${JNI_FOUND}) 
+	include_directories(${JNI_INCLUDE_DIRS})
+endif()
 
 
 add_subdirectory(3rdparty)

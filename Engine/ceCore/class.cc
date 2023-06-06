@@ -16,7 +16,6 @@ iObject::iObject()
 
 iObject::~iObject()
 {
-
 }
 
 const ce::Class* iObject::GetClass() const

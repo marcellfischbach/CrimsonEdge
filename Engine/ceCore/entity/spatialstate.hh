@@ -70,4 +70,16 @@ private:
 
 };
 
+
+
+
 }
+
+
+
+#ifdef CE_JAVA
+
+
+void Java_org_crimsonedge_core_entity_SpatialState_setLocalMatrix(JNIEnv* env, jclass cls, jlong refId, jfloatArray matrix);
+
+#endif // CE_JAVA

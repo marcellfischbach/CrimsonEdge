@@ -1,7 +1,6 @@
 #include <ceCore/entity/entitystate.hh>
 #include <ceCore/entity/entity.hh>
 #include <ceCore/entity/world.hh>
-#include <entity/entitystate.refl.hh>
 
 namespace ce
 {
@@ -17,7 +16,7 @@ EntityState::EntityState(const std::string &name)
 
 EntityState::~EntityState()
 {
-
+  CE_CLASS_GEN_DESTR;
 }
 
 void EntityState::SetName(const std::string &name)

@@ -10,6 +10,7 @@
 #include <ceCore/entity/collisionstate.hh>
 #include <ceCore/entity/entity.hh>
 #include <ceCore/entity/entitystate.hh>
+#include <ceCore/entity/jentitystate.hh>
 #include <ceCore/entity/lightstate.hh>
 #include <ceCore/entity/rigidbodystate.hh>
 #include <ceCore/entity/spatialstate.hh>
@@ -565,16 +566,41 @@ ce::iRenderTarget2D* create_render_target(ce::iDevice* device, uint32_t width, u
   return renderTarget;
 }
 
-void generate_test_grid(ce::World* world, ce::iMaterial* material)
+ce::JEntityState* create_test_state(JNIEnv *env)
+{
+  jclass clsGame = env->FindClass("org/crimsonedge/game/Game");
+  if (!clsGame)
+  {
+    return nullptr;
+  }
+
+  jmethodID mthdCreateTestEntityState = env->GetStaticMethodID(clsGame, "createTestEntityState", "()J");
+  if (!mthdCreateTestEntityState)
+  {
+    return nullptr;
+  }
+
+  jlong lng = env->CallStaticLongMethod(clsGame, mthdCreateTestEntityState);
+  printf("lng: 0x%08x\n", lng);
+  if (!lng)
+  {
+    return nullptr;
+  }
+
+
+  return reinterpret_cast<ce::JEntityState*>(lng);
+}
+
+void generate_test_grid(JNIEnv* env, ce::World* world, ce::iMaterial* material)
 {
   ce::iRenderMesh* sphere = create_sphere_mesh(0.25, 16, 4.0f);
   ce::Mesh* mesh = new ce::Mesh();
   mesh->AddMaterialSlot("Default", material);
   mesh->AddSubMesh(sphere, 0);
 
-  for (int a = 0, i = 0; i < 100; i++)
+  for (int a = 0, i = 0; i < 1; i++)
   {
-    for (int j = 0; j < 100; j++, a++)
+    for (int j = 0; j < 1; j++, a++)
     {
       ce::Entity* entity = new ce::Entity(std::string("Sphere: ") + std::to_string(i + 1) + ":" + std::to_string(j + 1));
 
@@ -614,6 +640,13 @@ void generate_test_grid(ce::World* world, ce::iMaterial* material)
         entity->Attach(testHandler04);
       }
       break;
+      }
+
+      ce::JEntityState* jes = create_test_state(env);
+      printf("Jes: %p\n", jes);
+      if (jes)
+      {
+        entity->Attach(jes);
       }
 
 
@@ -685,12 +718,20 @@ int main(int argc, char** argv)
 
   jint ver = jniEnv->GetVersion();
 
+
+  jclass clsJEntityState = jniEnv->FindClass("org/crimsonedge/core/entity/JEntityState");
+  if (clsJEntityState)
+  {
+    JNINativeMethod* methods = new JNINativeMethod[1];
+    methods[0].name = strdup("createJEntity");
+    methods[0].signature = strdup("(Lorg/crimsonedge/core/entity/JEntityState;)J");
+    methods[0].fnPtr = (void*)&Java_org_crimsonedge_core_entity_JEntityState_createJEntity;
+    printf("Register method\n");
+    jniEnv->RegisterNatives(clsJEntityState, methods, 1);
+  }
+
   printf("Create JVM: %d.%d\n", ((ver >> 16) & 0x0f), (ver & 0x0f));
   call_java_function(jniEnv);
-  if (true)
-  {
-    return -1;
-  }
 
 
 
@@ -990,7 +1031,7 @@ int main(int argc, char** argv)
     }
   }
 
-  generate_test_grid(world, defaultMaterialInstance);
+  generate_test_grid(jniEnv, world, defaultMaterialInstance);
   ce::Matrix4f proj;
   device->GetPerspectiveProjection(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1024.0f, proj);
 

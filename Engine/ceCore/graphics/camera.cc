@@ -18,7 +18,7 @@ Camera::Camera()
 
 Camera::~Camera()
 {
-
+  CE_CLASS_GEN_DESTR;
 }
 
 
