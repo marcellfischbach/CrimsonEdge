@@ -5,10 +5,17 @@ import org.crimsonedge.core.math.Matrix4;
 public class SpatialState extends EntityState {
 
 
-    public void setLocalMatrix(Matrix4 mat) {
-        setLocalMatrix(refID, mat.m);
+    public SpatialState() {
     }
 
-    private static native void setLocalMatrix(long refID, float[] matrix);
+    private static native void nSetLocalMatrix(long refID, float[] matrix);
+    public void setLocalMatrix(Matrix4 mat) {
+        nSetLocalMatrix(getNatPtr(), mat.m);
+    }
 
+
+    @Override
+    public String toString() {
+        return "SpatialState :-)";
+    }
 }

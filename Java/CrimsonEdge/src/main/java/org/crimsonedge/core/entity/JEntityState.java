@@ -2,13 +2,9 @@ package org.crimsonedge.core.entity;
 
 public class JEntityState extends EntityState {
 
-    private long m_ref;
-
     public JEntityState() {
         try {
-            System.out.println("JEntityState.JEntityState");
-            m_ref = createJEntity(this);
-            System.out.println("JEntityState.JEntityState: " + m_ref);
+            setNatPtr(nCreateJEntity(this));
         }
         catch (Exception e) {
             System.out.println("Caught exception: " + e.getMessage());
@@ -20,10 +16,5 @@ public class JEntityState extends EntityState {
 
     }
 
-
-    public long ref () {
-        return m_ref;
-    }
-
-    public static native long createJEntity(JEntityState entityState);
+    public static native long nCreateJEntity(JEntityState entityState);
 }

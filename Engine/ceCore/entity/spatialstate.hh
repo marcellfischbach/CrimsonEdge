@@ -12,7 +12,7 @@ namespace ce
 {
 
 
-CE_CLASS()
+CE_CLASS(java="org.crimsonedge.core.entity.SpatialState")
 class CE_CORE_API SpatialState : public CE_SUPER(EntityState)
 {
   CE_CLASS_GEN;
@@ -71,15 +71,18 @@ private:
 };
 
 
+#ifdef CE_JAVA
+
+
+extern "C"
+{
+  JNIEXPORT void JNICALL Java_org_crimsonedge_core_entity_SpatialState_nSetLocalMatrix(JNIEnv* env, jclass cls, jlong refId, jfloatArray matrix);
+}
+
+#endif // CE_JAVA
 
 
 }
 
 
 
-#ifdef CE_JAVA
-
-
-void Java_org_crimsonedge_core_entity_SpatialState_setLocalMatrix(JNIEnv* env, jclass cls, jlong refId, jfloatArray matrix);
-
-#endif // CE_JAVA

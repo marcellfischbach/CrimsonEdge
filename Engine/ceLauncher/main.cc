@@ -457,7 +457,9 @@ void create_suzannes_plain(ce::Mesh* suzanneMesh, ce::World* world, ce::iMateria
     {
       float y = -40.0f + (float)j / (float)num * 80.0f;
 
-      ce::Entity* suzanneEntity = new ce::Entity("Entity1");
+      ce::Entity* suzanneEntity = ce::NewInstance<ce::Entity>();
+      suzanneEntity->SetName("Entity1");
+
       ce::StaticMeshState* meshState1 = new ce::StaticMeshState("StaticMesh1");
       meshState1->GetTransform()
         .SetTranslation(ce::Vector3f(x, 0, y))
@@ -505,7 +507,8 @@ void create_suzanne_batch(ce::Mesh* suzanneMesh,
   }
   suzyMesh->AddSubMesh(batchedRM, 0);
 
-  ce::Entity* suzanneEntity = new ce::Entity("Entity1");
+  ce::Entity* suzanneEntity = ce::NewInstance<ce::Entity>();
+  suzanneEntity->SetName("Entity1");
   ce::StaticMeshState* meshState1 = new ce::StaticMeshState("StaticMesh1");
   meshState1->GetTransform()
     .SetTranslation(ce::Vector3f(0, 0, 0))
@@ -566,22 +569,22 @@ ce::iRenderTarget2D* create_render_target(ce::iDevice* device, uint32_t width, u
   return renderTarget;
 }
 
-ce::JEntityState* create_test_state(JNIEnv *env)
+ce::JEntityState* create_test_state(const ce::Vector3f& basePosition, float distance, float animationSpeed)
 {
+  JNIEnv *env = ce::java::Env::Get();
   jclass clsGame = env->FindClass("org/crimsonedge/game/Game");
   if (!clsGame)
   {
     return nullptr;
   }
 
-  jmethodID mthdCreateTestEntityState = env->GetStaticMethodID(clsGame, "createTestEntityState", "()J");
+  jmethodID mthdCreateTestEntityState = env->GetStaticMethodID(clsGame, "createTestEntityState", "(FFFFF)J");
   if (!mthdCreateTestEntityState)
   {
     return nullptr;
   }
 
-  jlong lng = env->CallStaticLongMethod(clsGame, mthdCreateTestEntityState);
-  printf("lng: 0x%08x\n", lng);
+  jlong lng = env->CallStaticLongMethod(clsGame, mthdCreateTestEntityState, basePosition.x, basePosition.y, basePosition.z, distance, animationSpeed);
   if (!lng)
   {
     return nullptr;
@@ -598,55 +601,62 @@ void generate_test_grid(JNIEnv* env, ce::World* world, ce::iMaterial* material)
   mesh->AddMaterialSlot("Default", material);
   mesh->AddSubMesh(sphere, 0);
 
-  for (int a = 0, i = 0; i < 1; i++)
+  for (int a = 0, i = 0; i < 100; i++)
   {
-    for (int j = 0; j < 1; j++, a++)
+    for (int j = 0; j < 100; j++, a++)
     {
-      ce::Entity* entity = new ce::Entity(std::string("Sphere: ") + std::to_string(i + 1) + ":" + std::to_string(j + 1));
+      ce::Entity* entity = ce::NewInstance<ce::Entity>();
+      entity->SetName(std::string("Sphere: ") + std::to_string(i + 1) + ":" + std::to_string(j + 1));
 
-      ce::StaticMeshState* meshStateSphere = new ce::StaticMeshState("Mesh");
+      ce::StaticMeshState* meshStateSphere = ce::NewInstance<ce::StaticMeshState>();
+      meshStateSphere->SetName("Mesh");
       meshStateSphere->GetTransform()
-        .SetTranslation(ce::Vector3f(i - 50, 0.25f, j - 50))
+        .SetTranslation(ce::Vector3f(i, 0.25f, j))
         .Finish();
       meshStateSphere->SetMesh(mesh);
       entity->Attach(meshStateSphere);
 
       float rnd = (float)rand() / (float)RAND_MAX;
-      int ma = a % 4;
-      switch (ma)
+      if (false)
       {
-      case 0:
+        int ma = a % 4;
+        switch (ma)
+        {
+        case 0:
+        {
+
+          TestHandler01* testHandler01 = new TestHandler01(ce::Vector3f(i - 50, 0.25f, j - 50), 0.25f, 0.5f + rnd);
+          entity->Attach(testHandler01);
+        }
+        break;
+        case 1:
+        {
+          TestHandler02* testHandler02 = new TestHandler02(ce::Vector3f(i - 50, 0.25f, j - 50), 0.25f, 0.5f + rnd);
+          entity->Attach(testHandler02);
+        }
+        break;
+        case 2:
+        {
+          TestHandler03* testHandler03 = new TestHandler03(ce::Vector3f(i - 50, 0.25f, j - 50), 0.25f, 0.5f + rnd);
+          entity->Attach(testHandler03);
+        }
+        break;
+        case 3:
+        {
+          TestHandler04* testHandler04 = new TestHandler04(ce::Vector3f(i - 50, 0.25f, j - 50), 0.25f, 0.5f + rnd);
+          entity->Attach(testHandler04);
+        }
+        break;
+        }
+      }
+      else
       {
 
-        TestHandler01* testHandler01 = new TestHandler01(ce::Vector3f(i - 50, 0.25f, j - 50), 0.25f, 0.5f + rnd);
-        entity->Attach(testHandler01);
-      }
-      break;
-      case 1:
-      {
-        TestHandler02* testHandler02 = new TestHandler02(ce::Vector3f(i - 50, 0.25f, j - 50), 0.25f, 0.5f + rnd);
-        entity->Attach(testHandler02);
-      }
-      break;
-      case 2:
-      {
-        TestHandler03* testHandler03 = new TestHandler03(ce::Vector3f(i - 50, 0.25f, j - 50), 0.25f, 0.5f + rnd);
-        entity->Attach(testHandler03);
-      }
-      break;
-      case 3:
-      {
-        TestHandler04* testHandler04 = new TestHandler04(ce::Vector3f(i - 50, 0.25f, j - 50), 0.25f, 0.5f + rnd);
-        entity->Attach(testHandler04);
-      }
-      break;
-      }
-
-      ce::JEntityState* jes = create_test_state(env);
-      printf("Jes: %p\n", jes);
-      if (jes)
-      {
-        entity->Attach(jes);
+        ce::JEntityState* jes = create_test_state(ce::Vector3f(i - 50, 0.25f, j - 50), 0.25f, 0.5f + rnd * 10.0f);
+        if (jes)
+        {
+          entity->Attach(jes);
+        }
       }
 
 
@@ -677,11 +687,35 @@ void call_java_function(JNIEnv *env)
 
 }
 
+
+
+
+
+
 #include <regex>
 #include <sstream>
 
 int main(int argc, char** argv)
 {
+  JavaVM* jvm;
+  JNIEnv* jniEnv;
+
+  JavaVMInitArgs args;
+  memset(&args, 0, sizeof(JavaVMInitArgs));
+  JavaVMOption* options = new JavaVMOption[1];
+  options[0].optionString = strdup("-Djava.class.path=C:/IDE/DEV/CPP/CrimsonEdge/Java/CrimsonEdge/target/crimson3d-1.0-SNAPSHOT.jar");
+  args.version = JNI_VERSION_1_8;
+  args.nOptions = 1;
+  args.options = options;
+  args.ignoreUnrecognized = false;
+  jint res = JNI_CreateJavaVM(&jvm, (void**)&jniEnv, &args);
+  if (res != JNI_OK)
+  {
+    printf("Unable to create java vm");
+    return -1;
+  }
+
+  ce::java::Env::Set(jniEnv);
 
   if (!register_modules(argc, argv))
   {
@@ -698,23 +732,7 @@ int main(int argc, char** argv)
 
 
 
-  JavaVM* jvm;
-  JNIEnv* jniEnv;
 
-  JavaVMInitArgs args;
-  memset(&args, 0, sizeof(JavaVMInitArgs));
-  JavaVMOption* options = new JavaVMOption[1];
-  options[0].optionString = strdup("-Djava.class.path=C:/IDE/DEV/CPP/CrimsonEdge/Java/CrimsonEdge/target/crimson3d-1.0-SNAPSHOT.jar");
-  args.version = JNI_VERSION_1_8;
-  args.nOptions = 1;
-  args.options = options;
-  args.ignoreUnrecognized = false;
-  jint res = JNI_CreateJavaVM(&jvm, (void**) & jniEnv, &args);
-  if (res != JNI_OK)
-  {
-    printf("Unable to create java vm");
-    return -1;
-  }
 
   jint ver = jniEnv->GetVersion();
 
@@ -723,12 +741,38 @@ int main(int argc, char** argv)
   if (clsJEntityState)
   {
     JNINativeMethod* methods = new JNINativeMethod[1];
-    methods[0].name = strdup("createJEntity");
+    methods[0].name = strdup("nCreateJEntity");
     methods[0].signature = strdup("(Lorg/crimsonedge/core/entity/JEntityState;)J");
     methods[0].fnPtr = (void*)&Java_org_crimsonedge_core_entity_JEntityState_createJEntity;
-    printf("Register method\n");
-    jniEnv->RegisterNatives(clsJEntityState, methods, 1);
+    jint res = jniEnv->RegisterNatives(clsJEntityState, methods, 1);
+    printf("RegisterNatives(JEntityState): %d\n", res);
   }
+
+
+
+  jclass clsEntityState = jniEnv->FindClass("org/crimsonedge/core/entity/EntityState");
+  if (clsEntityState)
+  {
+    JNINativeMethod* methods = new JNINativeMethod[1];
+    methods[0].name = strdup("nGetRoot");
+    methods[0].signature = strdup("(J)Lorg/crimsonedge/core/entity/SpatialState;");
+    methods[0].fnPtr = (void*)&ce::Java_org_crimsonedge_core_entity_EntityState_nGetRoot;
+    jint res = jniEnv->RegisterNatives(clsEntityState, methods, 1);
+    printf("RegisterNatives(EntityState): %d\n", res);
+  }
+
+  jclass clsSpatialState = jniEnv->FindClass("org/crimsonedge/core/entity/SpatialState");
+  if (clsSpatialState)
+  {
+    JNINativeMethod* methods = new JNINativeMethod[1];
+    methods[0].name = strdup("nSetLocalMatrix");
+    methods[0].signature = strdup("(J[F)V");
+    methods[0].fnPtr = (void*)&ce::Java_org_crimsonedge_core_entity_SpatialState_nSetLocalMatrix;
+    jint res = jniEnv->RegisterNatives(clsSpatialState, methods, 1);
+    printf("RegisterNatives(SpatialState): %d\n", res);
+  }
+
+
 
   printf("Create JVM: %d.%d\n", ((ver >> 16) & 0x0f), (ver & 0x0f));
   call_java_function(jniEnv);
@@ -778,7 +822,8 @@ int main(int argc, char** argv)
 
   {
     ce::iTerrainMesh* terrainMesh = create_terrain_mesh(40.0f);
-    ce::Entity* entity0 = new ce::Entity("Entity0");
+    ce::Entity* entity0 = ce::NewInstance<ce::Entity>();
+    entity0->SetName("Entity0");
     ce::StaticMeshState* meshState0 = new ce::StaticMeshState("StaticMesh0");
     ce::TerrainMeshState* terrainState = new ce::TerrainMeshState();
     terrainState->SetTerrainMesh(terrainMesh);
@@ -844,7 +889,8 @@ int main(int argc, char** argv)
 
   //  ce::SpatialState* spatialState = lightState;
 
-  ce::Entity* sunEntity = new ce::Entity("Sun");
+  ce::Entity* sunEntity = ce::NewInstance<ce::Entity>();
+  sunEntity->SetName("Sun");
   ce::LightState* sunLightState = new ce::LightState("SunLight");
   sunEntity->Attach(sunLightState);
   sunLightState->SetType(ce::eLT_Directional);
@@ -863,7 +909,8 @@ int main(int argc, char** argv)
 
 
 
-  sunEntity = new ce::Entity("Sun");
+  sunEntity = ce::NewInstance<ce::Entity>();
+  sunEntity->SetName("Sun");
   sunLightState = new ce::LightState("SunLight");
   sunEntity->Attach(sunLightState);
   sunLightState->SetType(ce::eLT_Directional);
@@ -881,7 +928,8 @@ int main(int argc, char** argv)
 
   //  world->Attach(sunEntity);
 
-  ce::Entity* cameraEntity = new ce::Entity("Camera");
+  ce::Entity* cameraEntity = ce::NewInstance<ce::Entity>();
+  cameraEntity->SetName("Camera");
   ce::CameraState* cameraState = new ce::CameraState();
 
   CameraHandler* cameraHandler = new CameraHandler();
@@ -895,7 +943,8 @@ int main(int argc, char** argv)
   world->SetMainCamera(cameraState);
 
 
-  ce::Entity* mirrorCameraEntity = new ce::Entity("MirrorCamera");
+  ce::Entity* mirrorCameraEntity = ce::NewInstance<ce::Entity>();
+  mirrorCameraEntity->SetName("MirrorCamera");
   ce::CameraState* mirrorCameraState = new ce::CameraState();
   MirrorHandler* mirrorHandler = new MirrorHandler();
   mirrorCameraEntity->Attach(mirrorCameraState);
@@ -942,7 +991,8 @@ int main(int argc, char** argv)
     physWorld->AddCollider(floorCollider);
     */
 
-  ce::Entity* floorEntity = new ce::Entity("Floor");
+  ce::Entity* floorEntity = ce::NewInstance<ce::Entity>();
+  floorEntity->SetName("Floor");
   ce::BoxColliderState* floorBoxCollider = new ce::BoxColliderState();
   ce::StaticColliderState* floorStaticCollider = new ce::StaticColliderState();
   floorBoxCollider->SetHalfExtends(ce::Vector3f(100.0f, 1.0f, 100.0f));
@@ -959,7 +1009,8 @@ int main(int argc, char** argv)
     {
       {
         ce::Mesh* meshSphere = new ce::Mesh();
-        ce::Entity* entitySphere = new ce::Entity("Sphere");
+        ce::Entity* entitySphere = ce::NewInstance<ce::Entity>();
+        entitySphere->SetName("Sphere");
         ce::StaticMeshState* meshStateSphere = new ce::StaticMeshState("Mesh.Sphere");
         ce::SphereColliderState* sphereColliderState = new ce::SphereColliderState();
         ce::RigidBodyState* rigidBodyState = new ce::RigidBodyState("RigidBody.Sphere");
@@ -991,7 +1042,8 @@ int main(int argc, char** argv)
       }
       {
         ce::Mesh* meshSphere = new ce::Mesh();
-        ce::Entity* entitySphere = new ce::Entity("Sphere");
+        ce::Entity* entitySphere = ce::NewInstance<ce::Entity>();
+        entitySphere->SetName("Sphere");
         ce::StaticMeshState* meshStateSphere = new ce::StaticMeshState("Mesh.Sphere");
         meshSphere->AddMaterialSlot("Default", defaultMaterialInstance);
         meshSphere->AddSubMesh(renderMeshSphere, 0);
@@ -1004,7 +1056,8 @@ int main(int argc, char** argv)
       }
       {
         ce::Mesh* meshSphere = new ce::Mesh();
-        ce::Entity* entitySphere = new ce::Entity("Sphere");
+        ce::Entity* entitySphere = ce::NewInstance<ce::Entity>();
+        entitySphere->SetName("Sphere");
         ce::StaticMeshState* meshStateSphere = new ce::StaticMeshState("Mesh.Sphere");
         meshSphere->AddMaterialSlot("Default", defaultMaterialInstance);
         meshSphere->AddSubMesh(renderMeshSphere, 0);
@@ -1017,7 +1070,8 @@ int main(int argc, char** argv)
       }
       {
         ce::Mesh* meshSphere = new ce::Mesh();
-        ce::Entity* entitySphere = new ce::Entity("Sphere");
+        ce::Entity* entitySphere = ce::NewInstance<ce::Entity>();
+        entitySphere->SetName("Sphere");
         ce::StaticMeshState* meshStateSphere = new ce::StaticMeshState("Mesh.Sphere");
         meshSphere->AddMaterialSlot("Default", defaultMaterialInstance);
         meshSphere->AddSubMesh(renderMeshSphere, 0);

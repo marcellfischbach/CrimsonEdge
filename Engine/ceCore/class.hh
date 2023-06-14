@@ -13,39 +13,45 @@
 #define CE_SUPER(Cls) Cls
 #define CE_PROPERTY(...)
 #define CE_FUNCTION(...)
+
+
+#ifdef CE_JAVA
+#define CE_CLASS_GEN_JAVA \
+    ; void BindJava() override
+
+#else
+#define CE_CLASS_GEN_JAVA
+#endif
+
 #define CE_CLASS_GEN public: \
     const ce::Class *GetClass () const override; \
     static const ce::Class *GetStaticClass (); \
     void *QueryClass(const ce::Class *clazz) override; \
-    const void *QueryClass(const ce::Class *clazz) const override
+    const void *QueryClass(const ce::Class *clazz) const override \
+    CE_CLASS_GEN_JAVA
 
 
 
 #ifdef CE_JAVA
 #define CE_CLASS_GEN_JAVA_OBJECT public: \
-  void SetJObject(JNIEnv* env, jobject obj) override \
+  void SetJObject(jobject obj) override \
   { \
     if (obj != m_jobject)  \
     { \
+      JNIEnv* env = ce::java::Env::Get();\
       if (m_jobject)\
       { \
         env->DeleteGlobalRef(obj); \
       } \
       m_jobject = env->NewGlobalRef(obj); \
     } \
-    m_jenv = env; \
   } \
   jobject GetJObject() const override \
   { \
     return m_jobject; \
   } \
-  JNIEnv *GetJNIEnv() const override \
-  { \
-    return m_jenv; \
-  } \
   protected: \
-  jobject m_jobject; \
-  JNIEnv *m_jenv;
+  jobject m_jobject = nullptr; 
 
 
 #else
@@ -81,7 +87,7 @@
 
 
 #ifdef CE_JAVA
-#define CE_CLASS_GEN_JAVA_CONSTR m_jobject = nullptr; m_jenv = nullptr;
+#define CE_CLASS_GEN_JAVA_CONSTR m_jobject = nullptr;
 #else
 #define CE_CLASS_GEN_JAVA_CONSTR 
 #endif // CE_JAVA
@@ -94,11 +100,10 @@
 
 #ifdef CE_JAVA
 #define CE_CLASS_GEN_JAVA_DESTR \
-  if (m_jobject && m_jenv) \
+  if (m_jobject) \
   { \
-    m_jenv->DeleteGlobalRef(m_jobject); \
+    ce::java::Env::Get()->DeleteGlobalRef(m_jobject); \
     m_jobject = nullptr; \
-    m_jenv = nullptr; \
   }
 #else
 #define CE_CLASS_GEN_JAVA_DESTR
@@ -197,6 +202,7 @@ class Class;
 struct CE_CORE_API iObject
 {
   iObject();
+
   virtual ~iObject();
   virtual const Class* GetClass() const;
   static const Class* GetStaticClass();
@@ -223,10 +229,12 @@ struct CE_CORE_API iObject
   CE_NODISCARD virtual const void* QueryClass(const Class* clazz) const;
 
 #ifdef CE_JAVA
-  virtual void SetJObject(JNIEnv* env, jobject obj) = 0;
+  virtual void BindJava() = 0;
+  virtual void SetJObject(jobject obj) = 0;
   virtual jobject GetJObject() const = 0;
-  virtual JNIEnv* GetJNIEnv() const = 0;
 #endif // CE_JAVA
+
+
 
 };
 
@@ -536,6 +544,12 @@ template<typename T>
 T* csNewClassInstance(const Class* clazz)
 {
   return reinterpret_cast<T*>(clazz->CreateInstance());
+}
+
+template<typename T>
+T* NewInstance()
+{
+  return T::GetStaticClass()->CreateInstance<T>();
 }
 
 

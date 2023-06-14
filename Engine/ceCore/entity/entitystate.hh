@@ -12,7 +12,7 @@ class Entity;
 class World;
 class SpatialState;
 
-CE_CLASS()
+CE_CLASS(java = "org.crimsonedge.core.entity.EntityState")
 class CE_CORE_API EntityState : public CE_SUPER(iObject)
 {
 CE_CLASS_GEN_OBJECT;
@@ -92,5 +92,16 @@ private:
   bool m_needUpdate;
 
 };
+
+#ifdef CE_JAVA
+
+
+extern "C"
+{
+  JNIEXPORT jobject JNICALL  Java_org_crimsonedge_core_entity_EntityState_nGetRoot(JNIEnv*, jclass, jlong ptr);
+
+}
+
+#endif
 
 }

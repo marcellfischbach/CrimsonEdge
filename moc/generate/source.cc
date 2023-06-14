@@ -2,6 +2,8 @@
 #include <generate/source.hh>
 #include <generate/ioutput.hh>
 #include <ast.hh>
+#include <string>
+#include <algorithm>
 
 
 namespace ce::moc
@@ -729,7 +731,12 @@ std::string ClassGenerator::GenerateClass(ClassNode * classNode, std::list<Names
   cls += "{\n";
   if (!classNode->HasPureVirtualMethod() && classNode->HasPublicDefaultConstructor() && !meta->Has("Virtual"))
   {
-    cls += "  return static_cast<ce::iObject*>(new " + fns + className + "());\n";
+    cls += "  ce::iObject* obj = static_cast<ce::iObject*>(new " + fns + className + "());\n";
+    cls += "#ifdef CE_JAVA\n";
+    cls += "  obj->BindJava();\n";
+    cls += "#endif\n";
+    cls += "  return obj;\n";
+
   }
   else
   {
@@ -748,6 +755,7 @@ std::string ClassGenerator::GenerateClass(ClassNode * classNode, std::list<Names
   cls += "}\n\n";
   cls += GenerateQueryClass(classNode, nss, meta, false);
   cls += GenerateQueryClass(classNode, nss, meta, true);
+  cls += GenerateJavaObjectInstantiation(classNode, nss, meta);
 
 
   return cls;
@@ -798,6 +806,70 @@ std::string ClassGenerator::GenerateQueryClass(ClassNode * classNode, std::list<
   return query;
 }
 
+
+
+std::string ClassGenerator::GenerateJavaObjectInstantiation(ClassNode* classNode, std::list<NamespaceNode*>& nss, CSMetaNode* meta)
+{
+  std::string fns = Generator::GetFullNamespaceName(nss);
+  std::string className = classNode->GetName();
+
+  std::string code = "";
+
+
+  code += "#ifdef CE_JAVA\n";
+  code += "void " + fns + className + "::BindJava() \n";
+  code += "{\n";
+
+  if (meta->Has("java"))
+  {
+
+    std::string javaFQCN = meta->Get("java");
+    code += "  // " + javaFQCN + "\n";
+    std::replace(javaFQCN.begin(), javaFQCN.end(), '.', '/');
+    javaFQCN.erase(std::remove(javaFQCN.begin(), javaFQCN.end(), '"'), javaFQCN.end());
+
+    code += "  JNIEnv* env = ce::java::Env::Get();\n";
+    code += "  static jclass cls= env->FindClass(\"" + javaFQCN + "\");\n";
+    code += "  static jmethodID ctor = env->GetMethodID(cls, \"<init>\", \"()V\");\n";
+
+    code += "  static jclass clsBaseObject= env->FindClass(\"org/crimsonedge/core/BaseObject\");\n";
+    code += "  static jmethodID mSetRef = env->GetMethodID(clsBaseObject, \"setNatPtr\", \"(J)V\");\n";
+
+    code += "  jobject obj = env->NewObject(cls, ctor);\n";
+    code += "  iObject *iObj = Query<iObject>();\n";
+    code += "  env->CallVoidMethod(obj, mSetRef, reinterpret_cast<jlong>(iObj));\n";
+    code += "  SetJObject(obj);\n";
+
+
+  }
+  else
+  {
+    for (auto super : classNode->GetSupers())
+    {
+      std::string superType = super.GetType().GetTypeName();
+      if (!super.IsCSSuper()
+        || superType == "iObject"
+        || superType == "ce::iObject"
+        || superType == "Object"
+        || superType == "ce::Object"
+        )
+      {
+        continue;
+      }
+
+      code += "  " + super.GetType().GetTypeName() + "::BindJava();\n";
+    }
+  }
+
+
+  code += "}\n\n";
+
+
+
+  code += "#endif\n";
+  
+  return code;
+}
 
 
 }

@@ -1,14 +1,14 @@
-package org.crimsonedge.core.entity;
+package org.crimsonedge.core;
 
 public class BaseObject {
 
-    protected long refID;
+    private long natPtr;
 
-    public long getRefID() {
-        return refID;
+    public long getNatPtr() {
+        return natPtr;
     }
 
-    public void setRefID(long refID) {
-        this.refID = refID;
+    public void setNatPtr(long natPtr) {
+        this.natPtr = natPtr;
     }
 }

@@ -7,11 +7,10 @@ public class Game {
         System.out.println("Game.setup");
     }
 
-    public static long createTestEntityState () {
-        System.out.println("Game.createTestEntityState");
-        TestEntityState tes = new TestEntityState();
+    public static long createTestEntityState (float x, float y, float z, float distance, float speed) {
+        TestEntityState tes = new TestEntityState(x, y, z, distance, speed);
 
-        return tes.ref();
+        return tes.getNatPtr();
     }
 
 }

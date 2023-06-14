@@ -55,6 +55,8 @@ private:
   std::string GenerateClass(ClassNode* classNode, std::list<NamespaceNode*>& nss, CSMetaNode *meta);
   std::string GenerateQueryClass(ClassNode* classNode, std::list<NamespaceNode*>& nss, CSMetaNode* meta, bool _const);
 
+  std::string GenerateJavaObjectInstantiation(ClassNode* classNode, std::list<NamespaceNode*>& nss, CSMetaNode* meta);
+
 
 private:
   std::vector<std::string> m_propertyClasses;

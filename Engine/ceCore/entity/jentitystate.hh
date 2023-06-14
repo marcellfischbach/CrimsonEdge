@@ -25,7 +25,7 @@ public:
 public:
   virtual void Update(float tpf) override;
 
-  virtual void SetJObject(JNIEnv * env, jobject obj) override;
+  virtual void SetJObject(jobject obj) override;
 
 
 private:

@@ -3,6 +3,7 @@ add_definitions(-DCE_CORE_EXPORT)
 add_definitions(-D_USE_MATH_DEFINES)
 
 set(SOURCES
+        cejava.cc
         cejava.hh
         class.cc
         class.hh

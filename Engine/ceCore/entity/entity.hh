@@ -14,13 +14,14 @@ class World;
 class EntityState;
 class SpatialState;
 
-CE_CLASS()
+
+CE_CLASS(java="org.crimsonedge.core.entity.Entity")
 class CE_CORE_API Entity : public CE_SUPER(iObject)
 {
 
   CE_CLASS_GEN_OBJECT;
 public:
-  Entity(const std::string &name = std::string(""));
+  Entity(const std::string & name = std::string(""));
   virtual ~Entity();
   
   void SetName(const std::string &name);
