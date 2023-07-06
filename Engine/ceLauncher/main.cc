@@ -594,7 +594,7 @@ ce::JEntityState* create_test_state(const ce::Vector3f& basePosition, float dist
   return reinterpret_cast<ce::JEntityState*>(lng);
 }
 
-void generate_test_grid(JNIEnv* env, ce::World* world, ce::iMaterial* material)
+void generate_test_grid(ce::World* world, ce::iMaterial* material)
 {
   ce::iRenderMesh* sphere = create_sphere_mesh(0.25, 16, 4.0f);
   ce::Mesh* mesh = new ce::Mesh();
@@ -617,7 +617,7 @@ void generate_test_grid(JNIEnv* env, ce::World* world, ce::iMaterial* material)
       entity->Attach(meshStateSphere);
 
       float rnd = (float)rand() / (float)RAND_MAX;
-      if (false)
+      if (true)
       {
         int ma = a % 4;
         switch (ma)
@@ -670,10 +670,16 @@ void call_java_function(JNIEnv *env)
 {
   jclass cls1 = env->FindClass("org/crimsonedge/core/Test");
   printf("Test.class: %p\n", cls1);
-
+  if (!cls1)
+  {
+    return;
+  }
   jmethodID ctor = env->GetMethodID(cls1, "<init>", "()V");
   printf("Test.Test: %p\n", ctor);
-
+  if (!ctor)
+  {
+    return;
+  }
   jobject obj = env->NewObject(cls1, ctor);
 
 
@@ -697,25 +703,6 @@ void call_java_function(JNIEnv *env)
 
 int main(int argc, char** argv)
 {
-  JavaVM* jvm;
-  JNIEnv* jniEnv;
-
-  JavaVMInitArgs args;
-  memset(&args, 0, sizeof(JavaVMInitArgs));
-  JavaVMOption* options = new JavaVMOption[1];
-  options[0].optionString = strdup("-Djava.class.path=C:/IDE/DEV/CPP/CrimsonEdge/Java/CrimsonEdge/target/crimson3d-1.0-SNAPSHOT.jar");
-  args.version = JNI_VERSION_1_8;
-  args.nOptions = 1;
-  args.options = options;
-  args.ignoreUnrecognized = false;
-  jint res = JNI_CreateJavaVM(&jvm, (void**)&jniEnv, &args);
-  if (res != JNI_OK)
-  {
-    printf("Unable to create java vm");
-    return -1;
-  }
-
-  ce::java::Env::Set(jniEnv);
 
   if (!register_modules(argc, argv))
   {
@@ -729,54 +716,6 @@ int main(int argc, char** argv)
   {
     return -1;
   }
-
-
-
-
-
-  jint ver = jniEnv->GetVersion();
-
-
-  jclass clsJEntityState = jniEnv->FindClass("org/crimsonedge/core/entity/JEntityState");
-  if (clsJEntityState)
-  {
-    JNINativeMethod* methods = new JNINativeMethod[1];
-    methods[0].name = strdup("nCreateJEntity");
-    methods[0].signature = strdup("(Lorg/crimsonedge/core/entity/JEntityState;)J");
-    methods[0].fnPtr = (void*)&Java_org_crimsonedge_core_entity_JEntityState_createJEntity;
-    jint res = jniEnv->RegisterNatives(clsJEntityState, methods, 1);
-    printf("RegisterNatives(JEntityState): %d\n", res);
-  }
-
-
-
-  jclass clsEntityState = jniEnv->FindClass("org/crimsonedge/core/entity/EntityState");
-  if (clsEntityState)
-  {
-    JNINativeMethod* methods = new JNINativeMethod[1];
-    methods[0].name = strdup("nGetRoot");
-    methods[0].signature = strdup("(J)Lorg/crimsonedge/core/entity/SpatialState;");
-    methods[0].fnPtr = (void*)&ce::Java_org_crimsonedge_core_entity_EntityState_nGetRoot;
-    jint res = jniEnv->RegisterNatives(clsEntityState, methods, 1);
-    printf("RegisterNatives(EntityState): %d\n", res);
-  }
-
-  jclass clsSpatialState = jniEnv->FindClass("org/crimsonedge/core/entity/SpatialState");
-  if (clsSpatialState)
-  {
-    JNINativeMethod* methods = new JNINativeMethod[1];
-    methods[0].name = strdup("nSetLocalMatrix");
-    methods[0].signature = strdup("(J[F)V");
-    methods[0].fnPtr = (void*)&ce::Java_org_crimsonedge_core_entity_SpatialState_nSetLocalMatrix;
-    jint res = jniEnv->RegisterNatives(clsSpatialState, methods, 1);
-    printf("RegisterNatives(SpatialState): %d\n", res);
-  }
-
-
-
-  printf("Create JVM: %d.%d\n", ((ver >> 16) & 0x0f), (ver & 0x0f));
-  call_java_function(jniEnv);
-
 
 
   set_window_icon();
@@ -1085,7 +1024,7 @@ int main(int argc, char** argv)
     }
   }
 
-  generate_test_grid(jniEnv, world, defaultMaterialInstance);
+  generate_test_grid(world, defaultMaterialInstance);
   ce::Matrix4f proj;
   device->GetPerspectiveProjection(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1024.0f, proj);
 

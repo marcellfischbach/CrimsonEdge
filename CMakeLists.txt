@@ -65,6 +65,8 @@ if (${JNI_FOUND})
 	endif()
 endif()
 
+message("JNI_LIBRARIES: ${JNI_LIBRARIES}")
+
 
 
 include(${CrimsonEdge_SOURCE_DIR}/Scripts/Findassimp.cmake)

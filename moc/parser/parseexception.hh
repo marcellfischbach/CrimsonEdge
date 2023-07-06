@@ -3,6 +3,7 @@
 
 #include <exception>
 #include <string>
+#include <cstdint>
 
 namespace ce::moc
 {

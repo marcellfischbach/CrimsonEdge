@@ -20,10 +20,10 @@ struct CE_CORE_API iPointLight : public CE_SUPER(iLight)
   virtual ~iPointLight() { }
 
   virtual void SetPosition(const Vector3f & direction) = 0;
-  virtual CE_NODISCARD const Vector3f& GetPosition() const = 0;
+  CE_NODISCARD virtual const Vector3f& GetPosition() const = 0;
 
   virtual void SetRange(float range) = 0;
-  virtual CE_NODISCARD float GetRange() const = 0;
+  CE_NODISCARD virtual float GetRange() const = 0;
 
 
 };

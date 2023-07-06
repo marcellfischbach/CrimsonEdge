@@ -75,7 +75,7 @@ bool Entity::Attach(Entity *entity, SpatialState *parentState)
   {
     return false;
   }
-  if (entity->GetParent() || std::find(m_children.begin(), m_children.end(), entity) != m_children.end())
+  if (entity->GetParent() || std::ranges::find(m_children.begin(), m_children.end(), entity) != m_children.end())
   {
     return false;
   }
@@ -113,7 +113,7 @@ bool Entity::Detach(Entity *entity)
   {
     return false;
   }
-  auto it = std::find(m_children.begin(), m_children.end(), entity);
+  auto it = std::ranges::find(m_children.begin(), m_children.end(), entity);
   if (it == m_children.end())
   {
     return false;
@@ -220,7 +220,7 @@ bool Entity::Attach(EntityState *entityState)
     return false;
   }
 
-  if (std::find(m_states.begin(), m_states.end(), entityState) != m_states.end())
+  if (std::ranges::find(m_states.begin(), m_states.end(), entityState) != m_states.end())
   {
     return false;
   }
@@ -248,7 +248,7 @@ bool Entity::Detach(EntityState *entityState)
   {
     return false;
   }
-  auto it = std::find(m_states.begin(), m_states.end(), entityState);
+  auto it = std::ranges::find(m_states.begin(), m_states.end(), entityState);
   if (it == m_states.end())
   {
     return false;
@@ -273,7 +273,7 @@ void Entity::RegisterEntityState(EntityState *entityState)
   {
     return;
   }
-  auto it = std::find(m_states.begin(), m_states.end(), entityState);
+  auto it = std::ranges::find(m_states.begin(), m_states.end(), entityState);
   if (it == m_states.end())
   {
     entityState->AddRef();
@@ -291,7 +291,7 @@ void Entity::DeregisterEntityState(EntityState *entityState)
   {
     return;
   }
-  auto it = std::find(m_states.begin(), m_states.end(), entityState);
+  auto it = std::ranges::find(m_states.begin(), m_states.end(), entityState);
   if (it != m_states.end())
   {
     if (m_world)

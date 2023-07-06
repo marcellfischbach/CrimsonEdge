@@ -2,6 +2,7 @@
 
 
 #include <string>
+#include <cstdint>
 
 namespace ce::moc
 {

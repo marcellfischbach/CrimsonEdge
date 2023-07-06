@@ -3,8 +3,6 @@ add_definitions(-DCE_CORE_EXPORT)
 add_definitions(-D_USE_MATH_DEFINES)
 
 set(SOURCES
-        cejava.cc
-        cejava.hh
         class.cc
         class.hh
         classregistry.cc
@@ -31,8 +29,6 @@ set(SOURCES
         entity/entity.hh
         entity/entitystate.cc
         entity/entitystate.hh
-        entity/jentitystate.cc
-        entity/jentitystate.hh
         entity/lightstate.cc
         entity/lightstate.hh
         entity/rigidbodystate.cc
@@ -216,6 +212,19 @@ set(SOURCES
         window/iwindow.hh
 
         )
+
+if (${JNI_FOUND})
+    if (${JAVA_BACKEND})
+
+    set(SOURCES
+            ${SOURCES}
+            cejava.cc
+            cejava.hh
+            entity/jentitystate.cc
+            entity/jentitystate.hh
+            )
+    endif()
+endif()
 
 
 add_library(ceCore SHARED

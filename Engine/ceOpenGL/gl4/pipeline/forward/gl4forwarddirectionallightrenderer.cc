@@ -21,6 +21,7 @@
 #include <ceCore/resource/assetmanager.hh>
 
 #include <algorithm>
+#include <float.h>
 
 namespace ce::opengl
 {

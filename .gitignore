@@ -1,10 +1,12 @@
 
 
 .vs/
+.vscode/
+.kdev4/
 .user
 .idea
 out/
-build/
+build*/
 Docs/html
 Docs/latex
 

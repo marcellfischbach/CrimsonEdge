@@ -19,22 +19,22 @@ struct CE_CORE_API iLight : public CE_SUPER(iObject)
 
   virtual ~iLight () { }
 
-  virtual CE_NODISCARD eLightType GetType() const = 0;
+  CE_NODISCARD virtual eLightType GetType() const = 0;
 
   virtual void SetChangeMode(eLightChangeMode changeMode) = 0;
-  virtual CE_NODISCARD eLightChangeMode GetChangeMode() const = 0;
+  CE_NODISCARD virtual eLightChangeMode GetChangeMode() const = 0;
 
   virtual void SetCastShadow(bool castShadow) = 0;
-  virtual CE_NODISCARD bool IsCastShadow() const = 0;
+  CE_NODISCARD virtual bool IsCastShadow() const = 0;
 
   virtual void SetShadowMapBias(float bias) = 0;
-  virtual CE_NODISCARD float GetShadowMapBias() const = 0;
+  CE_NODISCARD virtual float GetShadowMapBias() const = 0;
 
   virtual void SetColor(const Color4f& color) = 0;
-  virtual CE_NODISCARD const Color4f& GetColor() const = 0;
+  CE_NODISCARD virtual const Color4f& GetColor() const = 0;
 
   virtual void SetIntensity(float intensity) = 0;
-  virtual CE_NODISCARD float GetIntensity() const = 0;
+  CE_NODISCARD virtual float GetIntensity() const = 0;
 
 };
 

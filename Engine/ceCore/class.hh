@@ -549,7 +549,7 @@ T* csNewClassInstance(const Class* clazz)
 template<typename T>
 T* NewInstance()
 {
-  return T::GetStaticClass()->CreateInstance<T>();
+  return T::GetStaticClass()->template CreateInstance<T>();
 }
 
 
