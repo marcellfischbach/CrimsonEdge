@@ -60,6 +60,34 @@ void register_java_jentity_state()
   }
 }
 
+void register_java_entity()
+{
+  JNIEnv* jniEnv = java::Env::Get();
+  jclass cls = jniEnv->FindClass("org/crimsonedge/core/entity/Entity");
+  if (cls)
+  {
+
+    JNINativeMethod methods[] = {
+        create_method("nNew",
+                      "(Ljava/lang/String;)Ljava/lang/Object;",
+                      (void*)&Java_org_crimsonedge_core_entity_Entity_nNew),
+        create_method("nSetName",
+                      "(JLjava/lang/String;)V",
+                      (void*)&Java_org_crimsonedge_core_entity_Entity_nSetName),
+        create_method("nGetName",
+                      "(J)Ljava/lang/String;",
+                      (void*)&Java_org_crimsonedge_core_entity_Entity_nGetName),
+        create_method("nAttach",
+                      "(JJJ)Z",
+                      (void*)&Java_org_crimsonedge_core_entity_Entity_nAttach),
+        create_method("nDetach",
+                      "(JJ)Z",
+                      (void*)&Java_org_crimsonedge_core_entity_Entity_nDetach)
+    };
+    jint res = jniEnv->RegisterNatives(cls, methods, sizeof(methods) / sizeof(JNINativeMethod));
+    printf("register_java_entity: %d\n", res);
+  }
+}
 
 void register_java_entity_state()
 {
@@ -72,6 +100,12 @@ void register_java_entity_state()
         create_method("nGetRoot",
                       "(J)Lorg/crimsonedge/core/entity/SpatialState;",
                       (void*)&Java_org_crimsonedge_core_entity_EntityState_nGetRoot),
+        create_method("nGetName",
+                      "(J)Ljava/lang/String;",
+                      (void*)&Java_org_crimsonedge_core_entity_EntityState_nGetName),
+        create_method("nSetName",
+                      "(JLjava/lang/String;)V",
+                      (void*)&Java_org_crimsonedge_core_entity_EntityState_nSetName),
     };
     jint res = jniEnv->RegisterNatives(cls, methods, sizeof(methods) / sizeof(JNINativeMethod));
     printf("register_java_entity_state: %d\n", res);
@@ -95,6 +129,25 @@ void register_java_spatial_state()
     printf("register_java_spatial_state: %d\n", res);
   }
 }
+void register_java_world()
+{
+  JNIEnv* jniEnv = java::Env::Get();
+  jclass cls = jniEnv->FindClass("org/crimsonedge/core/entity/World");
+  if (cls)
+  {
+
+    JNINativeMethod methods[] = {
+        create_method("nAttach",
+                      "(JJ)V",
+                      (void*)&Java_org_crimsonedge_core_entity_World_nAttach),
+        create_method("nDetach",
+                      "(JJ)V",
+                      (void*)&Java_org_crimsonedge_core_entity_World_nDetach),
+    };
+    jint res = jniEnv->RegisterNatives(cls, methods, sizeof(methods) / sizeof(JNINativeMethod));
+    printf("register_java_world: %d\n", res);
+  }
+}
 
 
 
@@ -113,8 +166,10 @@ void initialize_java_bindings()
 {
   register_java_assetmanager();
   register_java_jentity_state();
+  register_java_entity();
   register_java_entity_state();
   register_java_spatial_state();
+  register_java_world();
 }
 
 

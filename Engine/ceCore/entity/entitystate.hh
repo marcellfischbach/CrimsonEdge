@@ -93,15 +93,4 @@ private:
 
 };
 
-#ifdef CE_JAVA
-
-
-extern "C"
-{
-  JNIEXPORT jobject JNICALL  Java_org_crimsonedge_core_entity_EntityState_nGetRoot(JNIEnv*, jclass, jlong ptr);
-
-}
-
-#endif
-
 }

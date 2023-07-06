@@ -13,4 +13,22 @@ public class CoreObject implements ICoreObject{
     public void setNatRef(long natRef) {
         this.natRef = natRef;
     }
+
+
+    public static native Object nNew(String cls);
+    public static <T extends CoreObject> T create(Class<T> cls) {
+
+        CEClass ceClass = cls.getAnnotation(CEClass.class);
+        if (ceClass == null) {
+            throw new NoCEClassDefinedException(cls);
+        }
+
+
+        Object obj = nNew(ceClass.value());
+        if (!cls.isInstance(obj)) {
+            return null;
+        }
+
+        return cls.cast(obj);
+    }
 }

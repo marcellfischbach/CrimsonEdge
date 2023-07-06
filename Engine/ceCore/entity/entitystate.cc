@@ -165,17 +165,5 @@ void EntityState::Update(float tpf)
   // nothing to be done
 }
 
-#ifdef CE_JAVA
-
-jobject Java_org_crimsonedge_core_entity_EntityState_nGetRoot(JNIEnv*, jclass, jlong ptr)
-{
-  iObject* obj = reinterpret_cast<iObject*>(ptr);
-  EntityState* entity = obj->Query<EntityState>();
-
-  SpatialState* root = entity->GetRoot();
-  return root->GetJObject();
-}
-
-#endif
 
 }

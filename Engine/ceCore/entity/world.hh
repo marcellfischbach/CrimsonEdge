@@ -14,7 +14,7 @@ class EntityState;
 class SpatialState;
 class CameraState;
 
-CE_CLASS()
+CE_CLASS(java="org.crimsonedge.core.entity.World")
 class CE_CORE_API World : public CE_SUPER(iObject)
 {
   CE_CLASS_GEN_OBJECT;
