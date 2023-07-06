@@ -71,17 +71,6 @@ private:
 };
 
 
-#ifdef CE_JAVA
-
-
-extern "C"
-{
-  JNIEXPORT void JNICALL Java_org_crimsonedge_core_entity_SpatialState_nSetLocalMatrix(JNIEnv* env, jclass cls, jlong refId, jfloatArray matrix);
-}
-
-#endif // CE_JAVA
-
-
 }
 
 

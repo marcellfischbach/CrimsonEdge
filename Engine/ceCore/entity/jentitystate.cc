@@ -54,14 +54,5 @@ void JEntityState::Update(float tpf)
 
 }
 
-jlong Java_org_crimsonedge_core_entity_JEntityState_createJEntity(JNIEnv* env, jclass, jobject entityState)
-{
-  ce::JEntityState* jes = new ce::JEntityState("");
-  jes->SetJObject(entityState);
-
-  ce::iObject* iObj = jes->Query<ce::iObject>();
-  return reinterpret_cast<jlong>(iObj);
-}
-
 
 #endif

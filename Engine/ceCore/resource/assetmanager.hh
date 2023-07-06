@@ -55,6 +55,7 @@ protected:
 
 
   std::vector<iAssetLoader*> m_loaders;
+  std::map<ResourceLocator, std::map<const Class*, iObject*>> m_objects;
 
 
 private:

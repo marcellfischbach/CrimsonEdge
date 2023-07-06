@@ -33,12 +33,14 @@ public class TestEntityState extends JEntityState {
             SpatialState root = getRoot();
             if (root != null) {
                 mat.setTranslation(new Vector3(
-                        this.x + (float)Math.cos(animationValue) * distance,
-                        this.y + (float)Math.cos(animationValue * 2.5) * distance,
-                        this.z + (float)Math.sin(animationValue * 1.3) * distance
+                        this.x + (float) Math.cos(animationValue) * distance,
+                        this.y,
+                        this.z + (float) Math.sin(animationValue * 1.3) * distance
 
                 ));
+
                 root.setLocalMatrix(mat);
+
             }
         }
         catch (Exception e) {

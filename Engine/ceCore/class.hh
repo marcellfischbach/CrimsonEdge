@@ -41,7 +41,7 @@
       JNIEnv* env = ce::java::Env::Get();\
       if (m_jobject)\
       { \
-        env->DeleteGlobalRef(obj); \
+        env->DeleteGlobalRef(m_jobject); \
       } \
       m_jobject = env->NewGlobalRef(obj); \
     } \

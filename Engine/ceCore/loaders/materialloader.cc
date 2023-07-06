@@ -40,7 +40,7 @@ Material* MaterialLoader::LoadMaterial(const Class*, const CrimsonFile* file, co
     return nullptr;
   }
 
-  auto material = new Material();
+  auto material = Material::GetStaticClass()->CreateInstance<Material>();
 
   LoadShading(material, materialElement, locator);
   LoadQueue(material, materialElement, locator);

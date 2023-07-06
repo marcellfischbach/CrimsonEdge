@@ -37,12 +37,5 @@ private:
 
 }
 
-extern "C"
-{
-
-  JNIEXPORT jlong JNICALL  Java_org_crimsonedge_core_entity_JEntityState_createJEntity
-  (JNIEnv*, jclass, jobject);
-
-}
 
 #endif // CE_JAVA

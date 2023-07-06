@@ -220,8 +220,13 @@ if (${JNI_FOUND})
             ${SOURCES}
             cejava.cc
             cejava.hh
+            coremodule_java.cc
+            coremodule_java.hh
+            coremodule_java_bindings.cc
+            coremodule_java_bindings.hh
             entity/jentitystate.cc
             entity/jentitystate.hh
+
             )
     endif()
 endif()

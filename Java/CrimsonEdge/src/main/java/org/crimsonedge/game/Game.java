@@ -10,7 +10,7 @@ public class Game {
     public static long createTestEntityState (float x, float y, float z, float distance, float speed) {
         TestEntityState tes = new TestEntityState(x, y, z, distance, speed);
 
-        return tes.getNatPtr();
+        return tes.getNatRef();
     }
 
 }

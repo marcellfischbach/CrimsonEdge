@@ -4,7 +4,7 @@ public class JEntityState extends EntityState {
 
     public JEntityState() {
         try {
-            setNatPtr(nCreateJEntity(this));
+            setNatRef(nCreateJEntity(this));
         }
         catch (Exception e) {
             System.out.println("Caught exception: " + e.getMessage());

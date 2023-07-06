@@ -10,12 +10,9 @@ public class SpatialState extends EntityState {
 
     private static native void nSetLocalMatrix(long refID, float[] matrix);
     public void setLocalMatrix(Matrix4 mat) {
-        nSetLocalMatrix(getNatPtr(), mat.m);
+        nSetLocalMatrix(getNatRef(), mat.m);
     }
 
 
-    @Override
-    public String toString() {
-        return "SpatialState :-)";
-    }
+
 }

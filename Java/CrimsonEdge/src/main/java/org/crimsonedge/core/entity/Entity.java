@@ -1,11 +1,7 @@
 package org.crimsonedge.core.entity;
 
-import org.crimsonedge.core.BaseObject;
+import org.crimsonedge.core.CoreObject;
 
-public class Entity extends BaseObject {
+public class Entity extends CoreObject {
 
-    @Override
-    public void setNatPtr(long natPtr) {
-        super.setNatPtr(natPtr);
-    }
 }

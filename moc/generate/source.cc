@@ -156,7 +156,7 @@ std::string ClassGenerator::GenerateFunctionClass(ClassNode* classNode, std::lis
     ")\n";
   source += "  {\n";
 
-  for (auto argument : function->GetArguments())
+  for (auto &argument : function->GetArguments())
   {
     source += "    " + GenerateAddAttribute(argument) + ";\n";
   }
@@ -216,7 +216,7 @@ std::string ClassGenerator::GenerateFunctionVoidInvokeMethod(ClassNode *classNod
     fkt += "    va_start(lst, obj);\n";
 
     const std::vector<Argument>& arguments = function->GetArguments();
-    for (auto argument : arguments)
+    for (auto &argument : arguments)
     {
       std::string type = GenerateTypeForMethodInvokation(argument.GetType());
       fkt += "    " + type + argument.GetName() + " = va_arg(lst, " + type + ");\n";
@@ -270,7 +270,7 @@ std::string ClassGenerator::GenerateFunctionValueInvokeMethod(ClassNode *classNo
     fkt += "    va_start(lst, obj);\n";
 
     const std::vector<Argument>& arguments = function->GetArguments();
-    for (auto argument : arguments)
+    for (auto &argument : arguments)
     {
       std::string type = GenerateTypeForMethodInvokation(argument.GetType());
       fkt += "    " + type + argument.GetName() + " = va_arg(lst, " + type + ");\n";
@@ -335,7 +335,7 @@ std::string ClassGenerator::GenerateFunctionReferenceInvokeMethod(ClassNode *cla
     fkt += "    va_start(lst, obj);\n";
 
     const std::vector<Argument>& arguments = function->GetArguments();
-    for (auto argument : arguments)
+    for (auto &argument : arguments)
     {
       std::string type = GenerateTypeForMethodInvokation(argument.GetType());
       fkt += "    " + type + argument.GetName() + " = va_arg(lst, " + type + ");\n";
@@ -398,7 +398,7 @@ std::string ClassGenerator::GenerateFunctionPointerInvokeMethod(ClassNode *class
     fkt += "    va_start(lst, obj);\n";
 
     const std::vector<Argument>& arguments = function->GetArguments();
-    for (auto argument : arguments)
+    for (auto &argument : arguments)
     {
       std::string type = GenerateTypeForMethodInvokation(argument.GetType());
       fkt += "    " + type + argument.GetName() + " = va_arg(lst, " + type + ");\n";
@@ -707,7 +707,7 @@ std::string ClassGenerator::GenerateClass(ClassNode * classNode, std::list<Names
   cls += fns + classClassName + "::" + classClassName + "()\n";
   cls += "  : ce::Class(\"" + fns + className + "\")\n";
   cls += "{\n";
-  for (auto super : classNode->GetSupers())
+  for (auto &super : classNode->GetSupers())
   {
     if (super.IsCSSuper())
     {
@@ -715,12 +715,12 @@ std::string ClassGenerator::GenerateClass(ClassNode * classNode, std::list<Names
     }
   }
 
-  for (auto propertyName : m_propertyClasses)
+  for (auto &propertyName : m_propertyClasses)
   {
     cls += "  AddProperty(new " + fns + propertyName + "());\n";
   }
 
-  for (auto functionName : m_functionClasses)
+  for (auto &functionName : m_functionClasses)
   {
     cls += "  AddFunction(new " + fns + functionName + "());\n";
   }
@@ -780,7 +780,7 @@ std::string ClassGenerator::GenerateQueryClass(ClassNode * classNode, std::list<
   query += "  }\n";
   query += "  " + sConst + "void *super = nullptr;\n";
 
-  for (auto super : classNode->GetSupers())
+  for (auto &super : classNode->GetSupers())
   {
     std::string superType = super.GetType().GetTypeName();
     if (!(super.IsCSSuper() 
@@ -832,8 +832,8 @@ std::string ClassGenerator::GenerateJavaObjectInstantiation(ClassNode* classNode
     code += "  static jclass cls= env->FindClass(\"" + javaFQCN + "\");\n";
     code += "  static jmethodID ctor = env->GetMethodID(cls, \"<init>\", \"()V\");\n";
 
-    code += "  static jclass clsBaseObject= env->FindClass(\"org/crimsonedge/core/BaseObject\");\n";
-    code += "  static jmethodID mSetRef = env->GetMethodID(clsBaseObject, \"setNatPtr\", \"(J)V\");\n";
+    code += "  static jclass clsBaseObject= env->FindClass(\"org/crimsonedge/core/CoreObject\");\n";
+    code += "  static jmethodID mSetRef = env->GetMethodID(clsBaseObject, \"setNatRef\", \"(J)V\");\n";
 
     code += "  jobject obj = env->NewObject(cls, ctor);\n";
     code += "  iObject *iObj = Query<iObject>();\n";
@@ -844,7 +844,7 @@ std::string ClassGenerator::GenerateJavaObjectInstantiation(ClassNode* classNode
   }
   else
   {
-    for (auto super : classNode->GetSupers())
+    for (auto &super : classNode->GetSupers())
     {
       std::string superType = super.GetType().GetTypeName();
       if (!super.IsCSSuper()

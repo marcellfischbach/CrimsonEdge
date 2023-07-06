@@ -5,6 +5,7 @@
 #include <ceLauncher/launchermodule.hh>
 #include <ceBullet/bulletmodule.hh>
 #include <ceCore/coremodule.hh>
+#include <ceCore/coremodule_java.hh>
 #include <ceCore/settings.hh>
 #include <ceCore/entity/camerastate.hh>
 #include <ceCore/entity/collisionstate.hh>
@@ -275,7 +276,7 @@ void set_window_icon()
     0x0000ff00,
     0x000000ff);
   SDL_LockSurface(surf);
-  SDL_memcpy(surf->pixels, image->GetData(), image->GetWidth() * image->GetHeight() * 4);
+  SDL_memcpy(surf->pixels, image->GetData(), (size_t)image->GetWidth() * (size_t)image->GetHeight() * 4L);
   SDL_UnlockSurface(surf);
   SDL_SetSurfaceBlendMode(surf, SDL_BLENDMODE_BLEND);
 
@@ -617,7 +618,7 @@ void generate_test_grid(ce::World* world, ce::iMaterial* material)
       entity->Attach(meshStateSphere);
 
       float rnd = (float)rand() / (float)RAND_MAX;
-      if (true)
+      if (false)
       {
         int ma = a % 4;
         switch (ma)
@@ -652,7 +653,7 @@ void generate_test_grid(ce::World* world, ce::iMaterial* material)
       else
       {
 
-        ce::JEntityState* jes = create_test_state(ce::Vector3f(i - 50, 0.25f, j - 50), 0.25f, 0.5f + rnd * 10.0f);
+        ce::JEntityState* jes = create_test_state(ce::Vector3f(i - 50, 0.25f, j - 50), 0.25f, 0.5f + rnd);
         if (jes)
         {
           entity->Attach(jes);
@@ -711,6 +712,16 @@ int main(int argc, char** argv)
 
   ce::DebugCache* debugCache = new ce::DebugCache();
   ce::ObjectRegistry::Register<ce::DebugCache>(debugCache);
+
+#ifdef CE_JAVA
+  if (!ce::java::initialize_java_vm())
+  {
+    printf("Unable to bind java\n");
+    return -1;
+  }
+
+  ce::java::initialize_java_bindings();
+#endif
 
   if (!initialize_modules(argc, argv))
   {

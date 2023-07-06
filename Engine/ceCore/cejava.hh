@@ -16,6 +16,7 @@ class CE_CORE_API Env
 public:
   static JNIEnv* Get();
   static bool Initialize();
+  static void Set(JNIEnv* env);
 
 private:
   Env();

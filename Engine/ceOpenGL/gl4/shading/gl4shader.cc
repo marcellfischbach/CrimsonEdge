@@ -31,7 +31,6 @@ GL4Shader::GL4Shader(eGL4ShaderType type)
     m_type = GL_COMPUTE_SHADER;
     break;
   }
-
   m_name = glCreateShader(m_type);
 }
 

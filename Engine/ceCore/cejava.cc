@@ -30,7 +30,7 @@ bool Env::Initialize()
   memset(&args, 0, sizeof(JavaVMInitArgs));
   JavaVMOption *options = new JavaVMOption[1];
   options[0].optionString = strdup(
-      "-Djava.class.path=D:/DEV/CrimsonEdge/Java/CrimsonEdge/target/crimson3d-1.0-SNAPSHOT.jar");
+      "-Djava.class.path=C:/IDE/DEV/CPP/CrimsonEdge/Java/CrimsonEdge/target/crimson3d-1.0-SNAPSHOT.jar");
   args.version = JNI_VERSION_19;
   args.nOptions = 1;
   args.options = options;
@@ -47,6 +47,11 @@ bool Env::Initialize()
   s_env = jniEnv;
 
   return true;
+}
+
+void Env::Set(JNIEnv* env)
+{
+  s_env = env;
 }
 
 

@@ -38,7 +38,19 @@ void AssetManager::RegisterLoader(iAssetLoader* loader)
 
 iObject* AssetManager::Get(const Class* cls, const ResourceLocator& locator)
 {
-  return Load(cls, locator);
+  auto it = m_objects.find(locator);
+  if (it != m_objects.end())
+  {
+    auto it2 = it->second.find(cls);
+    if (it2 != it->second.end())
+    {
+      return it2->second;
+    }
+  }
+
+  iObject* object = Load(cls, locator);
+  m_objects[locator][cls] = object;
+  return object;
 }
 
 
@@ -54,14 +66,14 @@ iObject* AssetManager::Load(const Class* cls, const ResourceLocator& locator)
         return obj;
       }
       fprintf(stderr, "Loader '%s' cannot load '%s'\n",
-              loader->GetClass()->GetName().c_str(),
-              locator.Encoded().c_str()
+        loader->GetClass()->GetName().c_str(),
+        locator.Encoded().c_str()
       );
     }
   }
 
   fprintf(stderr, "No loader found for '%s'\n",
-          locator.Encoded().c_str()
+    locator.Encoded().c_str()
   );
 
   return nullptr;
