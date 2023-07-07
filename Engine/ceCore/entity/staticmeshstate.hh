@@ -7,6 +7,7 @@
 #include <ceCore/entity/spatialstate.hh>
 
 
+
 namespace ce
 {
 
@@ -17,7 +18,7 @@ struct iMaterial;
 CE_CLASS(java="org.crimsonedge.core.entity.StaticMeshState")
 class CE_CORE_API StaticMeshState : public CE_SUPER(SpatialState)
 {
-CE_CLASS_GEN_OBJECT;
+CE_CLASS_GEN;
 public:
   StaticMeshState(const std::string& name = std::string(""));
   virtual ~StaticMeshState();

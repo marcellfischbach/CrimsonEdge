@@ -51,7 +51,7 @@
     return m_jobject; \
   } \
   protected: \
-  jobject m_jobject = nullptr; 
+  jobject m_jobject = nullptr;
 
 
 #else

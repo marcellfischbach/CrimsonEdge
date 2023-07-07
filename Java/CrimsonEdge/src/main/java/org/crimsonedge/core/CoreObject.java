@@ -1,5 +1,7 @@
 package org.crimsonedge.core;
 
+import org.crimsonedge.core.entity.JEntityState;
+
 public class CoreObject implements ICoreObject{
 
     private long natRef;
@@ -17,6 +19,14 @@ public class CoreObject implements ICoreObject{
 
     public static native Object nNew(String cls);
     public static <T extends CoreObject> T create(Class<T> cls) {
+        if (JEntityState.class.isAssignableFrom(cls)) {
+            try {
+                return cls.getConstructor().newInstance();
+            }
+            catch (Exception e) {
+                throw new CEInstantiationException(cls);
+            }
+        }
 
         CEClass ceClass = cls.getAnnotation(CEClass.class);
         if (ceClass == null) {
@@ -25,8 +35,11 @@ public class CoreObject implements ICoreObject{
 
 
         Object obj = nNew(ceClass.value());
+        if (obj == null) {
+            throw new CEInstantiationException(cls);
+        }
         if (!cls.isInstance(obj)) {
-            return null;
+            throw new ClassCastException("Unable to cast " + obj.getClass() + " to " + cls);
         }
 
         return cls.cast(obj);

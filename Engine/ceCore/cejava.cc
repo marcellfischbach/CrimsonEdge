@@ -29,8 +29,13 @@ bool Env::Initialize()
   JavaVMInitArgs args;
   memset(&args, 0, sizeof(JavaVMInitArgs));
   JavaVMOption *options = new JavaVMOption[1];
+#if 0
   options[0].optionString = strdup(
       "-Djava.class.path=D:/DEV/CrimsonEdge/Java/CrimsonEdge/target/crimson3d-1.0-SNAPSHOT.jar");
+#else
+  options[0].optionString = strdup(
+    "-Djava.class.path=C:/IDE/DEV/CPP/CrimsonEdge/Java/CrimsonEdge/target/crimson3d-1.0-SNAPSHOT.jar");
+#endif
   args.version = JNI_VERSION_19;
   args.nOptions = 1;
   args.options = options;

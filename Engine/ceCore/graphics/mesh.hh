@@ -19,7 +19,7 @@ namespace ce
 
 
 
-CE_CLASS()
+CE_CLASS(java="org.crimsonedge.core.graphics.Mesh")
 class CE_CORE_API Mesh : public CE_SUPER(iObject)
 {
   CE_CLASS_GEN_OBJECT;

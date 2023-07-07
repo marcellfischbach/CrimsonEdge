@@ -22,7 +22,7 @@ namespace ce
 struct iDevice;
 struct iShader;
 
-CE_CLASS()
+CE_CLASS(java = "org.crimsonedge.core.graphics.material.IMaterial")
 struct CE_CORE_API iMaterial : public CE_SUPER(iObject)
 {
   CE_CLASS_GEN;

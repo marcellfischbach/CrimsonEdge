@@ -829,16 +829,17 @@ std::string ClassGenerator::GenerateJavaObjectInstantiation(ClassNode* classNode
     javaFQCN.erase(std::remove(javaFQCN.begin(), javaFQCN.end(), '"'), javaFQCN.end());
 
     code += "  JNIEnv* env = ce::java::Env::Get();\n";
-    code += "  static jclass cls= env->FindClass(\"" + javaFQCN + "\");\n";
-    code += "  static jmethodID ctor = env->GetMethodID(cls, \"<init>\", \"()V\");\n";
+    code += "  jclass cls= env->FindClass(\"" + javaFQCN + "\");\n";
+    code += "  jmethodID ctor = env->GetMethodID(cls, \"<init>\", \"()V\");\n";
 
-    code += "  static jclass clsBaseObject= env->FindClass(\"org/crimsonedge/core/CoreObject\");\n";
-    code += "  static jmethodID mSetRef = env->GetMethodID(clsBaseObject, \"setNatRef\", \"(J)V\");\n";
+//    code += "  jclass clsBaseObject= env->FindClass(\"org/crimsonedge/core/CoreObject\");\n";
+    code += "  jmethodID mSetRef = env->GetMethodID(cls, \"setNatRef\", \"(J)V\");\n";
 
     code += "  jobject obj = env->NewObject(cls, ctor);\n";
     code += "  iObject *iObj = Query<iObject>();\n";
-    code += "  env->CallVoidMethod(obj, mSetRef, reinterpret_cast<jlong>(iObj));\n";
     code += "  SetJObject(obj);\n";
+    code += "  env->CallVoidMethod(GetJObject(), mSetRef, reinterpret_cast<jlong>(iObj));\n";
+
 
 
   }

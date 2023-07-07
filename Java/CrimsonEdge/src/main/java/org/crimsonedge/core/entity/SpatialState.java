@@ -1,7 +1,9 @@
 package org.crimsonedge.core.entity;
 
+import org.crimsonedge.core.CEClass;
 import org.crimsonedge.core.math.Matrix4;
 
+@CEClass("ce::SpatialState")
 public class SpatialState extends EntityState {
 
 

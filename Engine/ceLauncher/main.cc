@@ -595,12 +595,39 @@ ce::JEntityState* create_test_state(const ce::Vector3f& basePosition, float dist
   return reinterpret_cast<ce::JEntityState*>(lng);
 }
 
+void create_test_world(ce::World* world, ce::iMaterial* material)
+{
+  ce::iRenderMesh* sphere = create_sphere_mesh(0.25, 16, 4.0f);
+  ce::Mesh* mesh = ce::NewInstance<ce::Mesh>();
+  mesh->AddMaterialSlot("Default", material);
+  mesh->AddSubMesh(sphere, 0);
+
+
+  JNIEnv* env = ce::java::Env::Get();
+  jclass clsGame = env->FindClass("org/crimsonedge/game/Game");
+  if (!clsGame)
+  {
+    return;
+  }
+
+  jmethodID mthdCreateTestWorld = env->GetStaticMethodID(clsGame, "createTestWorld", "(Lorg/crimsonedge/core/entity/World;Lorg/crimsonedge/core/graphics/Mesh;)V");
+  if (!mthdCreateTestWorld)
+  {
+    return;
+  }
+
+  env->CallStaticVoidMethod(clsGame, mthdCreateTestWorld, world->GetJObject(), mesh->GetJObject());
+
+}
+
 void generate_test_grid(ce::World* world, ce::iMaterial* material)
 {
   ce::iRenderMesh* sphere = create_sphere_mesh(0.25, 16, 4.0f);
-  ce::Mesh* mesh = new ce::Mesh();
+  ce::Mesh* mesh = ce::NewInstance<ce::Mesh>();
   mesh->AddMaterialSlot("Default", material);
   mesh->AddSubMesh(sphere, 0);
+
+
 
   for (int a = 0, i = 0; i < 100; i++)
   {
@@ -757,7 +784,7 @@ int main(int argc, char** argv)
   ce::TerrainLayerMask* terrainLayers =
     assetMan->Get<ce::TerrainLayerMask>(ce::ResourceLocator("/terrain/terrain.terrainmask"));
 
-  ce::World* world = new ce::World();
+  ce::World* world = ce::NewInstance<ce::World>();
 
   int wnd_width, wnd_height;
   SDL_GetWindowSize(wnd, &wnd_width, &wnd_height);
@@ -1035,7 +1062,11 @@ int main(int argc, char** argv)
     }
   }
 
+#if 0
   generate_test_grid(world, defaultMaterialInstance);
+#else
+  create_test_world(world, defaultMaterialInstance);
+#endif
   ce::Matrix4f proj;
   device->GetPerspectiveProjection(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1024.0f, proj);
 

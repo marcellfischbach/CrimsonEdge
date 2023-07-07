@@ -1,5 +1,6 @@
 package org.crimsonedge.core.graphics.material;
 
+import org.crimsonedge.core.CEClass;
 import org.crimsonedge.core.CoreObject;
 import org.crimsonedge.core.graphics.EFillMode;
 import org.crimsonedge.core.graphics.ERenderQueue;
@@ -9,6 +10,7 @@ import org.crimsonedge.core.math.Vector2;
 import org.crimsonedge.core.math.Vector3;
 import org.crimsonedge.core.math.Vector4;
 
+@CEClass("ce::Material")
 public class Material extends CoreObject implements IMaterial {
 
     private native int nGetFillMode (long ptr);
